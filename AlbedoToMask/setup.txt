@@ -2,3 +2,6 @@ ctrl shift p -> python: create environment -> .venv
 ctrl ` -> command prompt -> py -m pip install PACKAGE_NAME
 
 https://code.visualstudio.com/docs/python/python-tutorial#_install-and-use-packages
+
+
+python color_quantization.py D:\Profiles\qz3017\Downloads\source\Rising_from_cracked_m_0204165031_texture.png -k 6 -o D:\Profiles\qz3017\Downloads\source\output.png
