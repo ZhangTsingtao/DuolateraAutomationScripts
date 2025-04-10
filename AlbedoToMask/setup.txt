@@ -1,0 +1,4 @@
+ctrl shift p -> python: create environment -> .venv
+ctrl ` -> command prompt -> py -m pip install PACKAGE_NAME
+
+https://code.visualstudio.com/docs/python/python-tutorial#_install-and-use-packages
