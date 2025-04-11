@@ -31,25 +31,54 @@ def quantize_colors(image_path, k=8, output_path=None):
     # Apply K-means clustering
     _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
     
-    print(centers)
-    print(len(labels))
-
+    
     # Convert back to uint8
     centers = np.uint8(centers)
-    
     # Map each pixel to its corresponding center
     quantized_flat = centers[labels.flatten()]
-    
     # Reshape back to the original image shape
     quantized = quantized_flat.reshape(image_rgb.shape)
+    # Convert back to BGR for OpenCV
+    clustered_preview = cv2.cvtColor(quantized, cv2.COLOR_RGB2BGR)
     
+    print(f"Image resolution: {image.shape[1]} x {image.shape[0]}")
+    print(f"Clustered values: \n {centers}")
+    print(len(labels))
+
+    # Then, convert clustered into RGB Channel Mask
+    for i, center in enumerate(centers):
+        j = i % 3
+        if j == 0: 
+            centers[i] = [255, 0, 0]
+        elif j == 1:
+            centers[i] = [0, 255, 0]
+        elif j == 2:
+            centers[i] = [0, 0, 255]
+
+    print(f"RGB Channel Mask: \n {centers}")
+    # Convert back to uint8
+    centers = np.uint8(centers)
+    # Map each pixel to its corresponding center
+    quantized_flat = centers[labels.flatten()]
+    # Reshape back to the original image shape
+    quantized = quantized_flat.reshape(image_rgb.shape)
     # Convert back to BGR for OpenCV
     quantized_bgr = cv2.cvtColor(quantized, cv2.COLOR_RGB2BGR)
-    
+
+    # Preview the clustered image
+    scaled_img = cv2.resize(clustered_preview, (720, 720))
+    cv2.imshow("Clustered Preview", scaled_img)
+    # Preview RGB Channel Mask
+    scaled_img = cv2.resize(quantized_bgr, (720, 720))
+    cv2.imshow("RGB Channel Mask", scaled_img)
+    # Wait for a key press and then close
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     # Save the result if an output path is provided
     if output_path is None:
         output_path = f"{image_path.rsplit('.', 1)[0]}_quantized_{k}_colors.png"
-    
+
     cv2.imwrite(output_path, quantized_bgr)
     print(f"Quantized image saved to {output_path}")
     
