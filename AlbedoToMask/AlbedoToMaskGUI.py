@@ -26,11 +26,7 @@ class DropArea(QLabel):
             event.ignore()
         
     def dragLeaveEvent(self, event):
-        if event.mimeData().hasUrls():
-            self.setStyleSheet("border: 2px dashed #aaa; border-radius: 5px; padding: 25px;")
-            event.accept()
-        else:
-            event.ignore()
+        self.setStyleSheet("border: 2px dashed #aaa; border-radius: 5px; padding: 25px;")
         
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
