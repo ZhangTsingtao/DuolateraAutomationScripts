@@ -60,6 +60,11 @@ def quantize_colors(image_path, k=8):
             # Reset centers to [0,0,0]
             for index, center in enumerate(centers):
                 centers[index] = [0, 0, 0]
+    
+    # if k %3 != 0, then there will be less than 3 channels left for the last image, we need to print it as well
+    print(j)
+    
+
 
     
     # Wait for a key press and then close
