@@ -103,13 +103,13 @@ class MainWindow(QMainWindow):
 
 
 
-    def quantizeColors(self, image_path, k=6):
+    def quantizeColors(self, imagePath, k=6):
 
         # Read the image
-        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+        image = cv2.imread(imagePath, cv2.IMREAD_COLOR)
         if image is None:
             #raise ValueError(f"Could not read image at {image_path}")
-            QMessageBox.critical(self, "File Path Error", f"Could not read image at {image_path}")
+            QMessageBox.critical(self, "File Path Error", f"Could not read image at {imagePath}")
             return
 
         # Convert to RGB (OpenCV uses BGR by default)
@@ -130,13 +130,13 @@ class MainWindow(QMainWindow):
         print(f"Image resolution: {image.shape[1]} x {image.shape[0]}")
         print(f"Clustered values: \n {centers}")
         print(len(labels))
-        self.show_image(originalCenters, labels, imageRgb, "clustered")
+        self.showImage(originalCenters, labels, imageRgb, "clustered")
 
         # First, set centers to all [0,0,0]
         for i, center in enumerate(centers):
             centers[i] = [0, 0, 0]
 
-        # Then, iterate through k, store every 3 in a mask
+        # Then, iterate through k, store every 3 channels in a mask
         i = 0
         j = i
         while i < k:
@@ -150,12 +150,14 @@ class MainWindow(QMainWindow):
             i += 1
             j = i % 3
 
-            if j == 0: # time to save a mask
-                maskIndex = int(i/3 - 1)
+            if j == 0 or i == k: # time to save a mask
+                print(i)
+                maskIndex = int(i/3)
+                if i % 3 > 0: maskIndex += 1
                 print(maskIndex)
-                maskBgr = self.show_image(centers, labels, imageRgb, f"Mask_{maskIndex}")
+                maskBgr = self.showImage(centers, labels, imageRgb, f"Mask_{maskIndex}")
 
-                outputPath = f"{image_path.rsplit('.', 1)[0]}_Mask_{maskIndex}.png"
+                outputPath = f"{imagePath.rsplit('.', 1)[0]}_Mask_{maskIndex}.png"
 
                 cv2.imwrite(outputPath, maskBgr)
                 print(f"Quantized image saved to {outputPath}")
@@ -164,12 +166,16 @@ class MainWindow(QMainWindow):
                 for index, center in enumerate(centers):
                     centers[index] = [0, 0, 0]
 
+            
+        
+
         # Wait for a key press and then close
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return originalCenters
     
-    def show_image(self, centers, labels, imageRgb, imageName):
+
+    def showImage(self, centers, labels, imageRgb, imageName):
         centers = np.uint8(centers)
         # Map each pixel to its corresponding center
         imageFlat = centers[labels.flatten()]
